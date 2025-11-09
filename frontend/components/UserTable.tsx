@@ -46,7 +46,7 @@ export default function UserTable() {
 
       <table className="w-full border border-gray-300 rounded">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="bg-white-100">
             <th className="p-2 border">ID</th>
             <th className="p-2 border">Nome</th>
             <th className="p-2 border">Email</th>

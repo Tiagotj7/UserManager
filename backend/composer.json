@@ -1,0 +1,15 @@
+{
+  "name": "meuusuario/usermanager-backend",
+  "description": "API REST em PHP com CRUD completo (Create, Read, Update, Delete) para o projeto UserManager.",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Seu Nome",
+      "email": "seuemail@exemplo.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.4"
+  }
+}

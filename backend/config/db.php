@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 $host = "sql311.infinityfree.com";   // Hostname exato
 $user = "if0_40369202";              // Username do painel
 $pass = "25VKNWnG0gADjk";            // Senha do painel
-$dbname = "if0_40369202_usermanager"; // Nome completo do banco
+$dbname = "if0_40369202_usermanager_db"; // Nome completo do banco
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 

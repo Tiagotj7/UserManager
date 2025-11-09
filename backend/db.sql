@@ -1,4 +1,4 @@
-CREATE DATABASE meu_banco;
+/*CREATE DATABASE meu_banco;
 USE meu_banco;
 
 CREATE TABLE usuarios (

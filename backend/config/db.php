@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 $host   = "sql311.infinityfree.com";      // do painel
 $user   = "if0_40369202";                 // do painel
 $pass   = "25VKNWnG0gADjk";         // do painel (cole exato)
-$dbname = "if0_40369202_usermanager";     // do painel
+$dbname = "if0_40369202_usermanager_db";     // do painel
 
 // tenta conexão (sem suprimir erros)
 $conn = new mysqli($host, $user, $pass, $dbname);

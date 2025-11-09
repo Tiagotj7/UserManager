@@ -19,5 +19,5 @@ jobs:
           server: ftpupload.net
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./backend
+          local-dir: ./backend/
           server-dir: ${{ secrets.FTP_PATH }}

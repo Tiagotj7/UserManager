@@ -1,14 +1,16 @@
 <?php
-require 'db.php';
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
 
-$sql = "SELECT id, title, description, image, created_at FROM projects ORDER BY id DESC";
-$stmt = $conn->prepare($sql);
-$projects = [];
-if ($stmt->execute()) {
-    $res = $stmt->get_result();
-    while ($row = $res->fetch_assoc()) {
-        $projects[] = $row;
-    }
+include 'config.php';
+
+$sql = "SELECT * FROM items";
+$result = $conn->query($sql);
+
+$data = [];
+while ($row = $result->fetch_assoc()) {
+    $data[] = $row;
 }
-header('Content-Type: application/json; charset=utf-8');
-echo json_encode(['success' => true, 'projects' => $projects]);
+
+echo json_encode($data);
+?>

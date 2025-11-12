@@ -1,4 +1,4 @@
-import type { Project } from '../types.d'
+import type { Project } from '../../types.d'
 
 export default function ProjectCard({ project }: { project: Project }) {
   return (

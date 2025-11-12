@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import type { Project } from '../../types.d'
+import type { Project } from '../../../types'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost/impact-api'
 

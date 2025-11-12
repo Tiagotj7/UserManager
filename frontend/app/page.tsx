@@ -1,9 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react'
-import Hero from '../components/Hero'
-import ProjectCard from '../components/ProjectCard'
+import Hero from '../src/components/Hero'
+import ProjectCard from '../src/components/ProjectCard'
 import type { Project } from '../types.d'
 
+// access env via global `process.env` (typed in `types.d.ts`)
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost/impact-api'
 
 export default function Page() {

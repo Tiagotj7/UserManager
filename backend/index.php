@@ -1,14 +1,28 @@
 <?php
 // =======================================================
-//  CORS – libera acesso APENAS para o seu front na Vercel
+//  CONFIGURAÇÃO DE CORS (ACESSO ENTRE DOMÍNIOS)
 // =======================================================
 
+// Domínios permitidos a acessar sua API
 header('Access-Control-Allow-Origin: https://user-manager-drab.vercel.app');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if ($origin && in_array($origin, $allowedOrigins)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Vary: Origin"); // ajuda cache
+} else {
+    // Para facilitar testes, libera geral.
+    // Em produção real, o ideal é usar apenas a lista de allowedOrigins.
+    header("Access-Control-Allow-Origin: *");
+}
+
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header('Content-Type: application/json; charset=utf-8');
 
-// Se for uma requisição de preflight (OPTIONS), só responde e sai
+// Responde requisições de preflight (OPTIONS) e encerra
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit;
@@ -18,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 //  CONEXÃO COM O BANCO
 // =======================================================
 
-require __DIR__ . '/db.php';
+require __DIR__ . '/db.php'; // garante o caminho correto até db.php
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -170,7 +184,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'error'   => 'Erro no banco de dados',
-        'details' => $e->getMessage(),
+        'details' => $e->getMessage(), // remova em produção se não quiser expor detalhes
     ]);
 } catch (Throwable $e) {
     http_response_code(500);

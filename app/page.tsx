@@ -10,7 +10,7 @@ type Item = {
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://usermanager.infinityfreeapp.com/backend/index.php";
+  "https://usermanager.infinityfreeapp.com/backend/test.php";
 
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);

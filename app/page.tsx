@@ -1,65 +1,204 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+
+type Item = {
+  id: number;
+  name: string;
+  description: string | null;
+};
+
+const API_URL = "http://localhost:8081/tst/UserManager/backend/index.php";
 
 export default function Home() {
+  const [items, setItems] = useState<Item[]>([]);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const fetchItems = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error("Erro ao buscar itens");
+      const data = await res.json();
+      setItems(data);
+    } catch (err) {
+      setError("Erro ao carregar itens");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!name.trim()) {
+      setError("Nome é obrigatório");
+      return;
+    }
+
+    const method = editingId ? "PUT" : "POST";
+    const body: any = { name, description };
+    if (editingId) body.id = editingId;
+
+    try {
+      const res = await fetch(API_URL, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) throw new Error("Erro ao salvar");
+
+      await fetchItems();
+      setName("");
+      setDescription("");
+      setEditingId(null);
+    } catch (err) {
+      setError("Erro ao salvar item");
+    }
+  };
+
+  const handleEdit = (item: Item) => {
+    setEditingId(item.id);
+    setName(item.name);
+    setDescription(item.description ?? "");
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setName("");
+    setDescription("");
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Tem certeza que deseja excluir este item?")) return;
+
+    try {
+      const res = await fetch(`${API_URL}?id=${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Erro ao excluir");
+
+      await fetchItems();
+    } catch (err) {
+      setError("Erro ao excluir item");
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div
+      style={{
+        maxWidth: 800,
+        margin: "40px auto",
+        fontFamily: "sans-serif",
+      }}
+    >
+      <h1>CRUD Next.js + PHP (XAMPP)</h1>
+
+      <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
+        <h2>{editingId ? "Editar item" : "Novo item"}</h2>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
+        <div style={{ marginBottom: 10 }}>
+          <label>
+            Nome:
+            <br />
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              style={{ width: "100%", padding: 8 }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </label>
         </div>
-      </main>
+
+        <div style={{ marginBottom: 10 }}>
+          <label>
+            Descrição:
+            <br />
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              style={{ width: "100%", padding: 8 }}
+            />
+          </label>
+        </div>
+
+        <button type="submit" style={{ padding: "8px 16px", marginRight: 8 }}>
+          {editingId ? "Atualizar" : "Cadastrar"}
+        </button>
+
+        {editingId && (
+          <button
+            type="button"
+            onClick={handleCancelEdit}
+            style={{ padding: "8px 16px" }}
+          >
+            Cancelar
+          </button>
+        )}
+      </form>
+
+      <h2>Lista de itens</h2>
+
+      {loading ? (
+        <p>Carregando...</p>
+      ) : (
+        <table
+          width="100%"
+          border={1}
+          cellPadding={8}
+          style={{ borderCollapse: "collapse" }}
+        >
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Descrição</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.length === 0 && (
+              <tr>
+                <td colSpan={4} style={{ textAlign: "center" }}>
+                  Nenhum item cadastrado
+                </td>
+              </tr>
+            )}
+
+            {items.map((item) => (
+              <tr key={item.id}>
+                <td>{item.id}</td>
+                <td>{item.name}</td>
+                <td>{item.description}</td>
+                <td>
+                  <button
+                    onClick={() => handleEdit(item)}
+                    style={{ marginRight: 8 }}
+                  >
+                    Editar
+                  </button>
+                  <button onClick={() => handleDelete(item.id)}>
+                    Excluir
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }

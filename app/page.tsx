@@ -8,7 +8,7 @@ type Item = {
   description: string | null;
 };
 
-const API_URL = "http://localhost:8081/tst/UserManager/backend/index.php";
+const API_URL = "https://usermanager.infinityfreeapp.com/backend/index.php";
 
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);

@@ -1,8 +1,8 @@
 <?php
-$host = 'localhost:3307';
-$db   = 'crud_next_php';
-$user = 'root';
-$pass = ''; // padrão do XAMPP é senha vazia
+$host = 'sql311.infinityfree.com'; // coloque aqui o MySQL Hostname do painel
+$db   = 'if0_40369202_db_admin'; // nome completo do banco
+$user = 'if0_40369202'; // usuário MySQL
+$pass = '25VKNnWoG0gADjk'; // senha que você escolheu
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -18,6 +18,6 @@ try {
 } catch (\PDOException $e) {
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => 'Erro na conexão com o banco']);
+    echo json_encode(['error' => 'Erro na conexão com o banco: ' . $e->getMessage()]);
     exit;
 }

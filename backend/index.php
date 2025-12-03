@@ -3,19 +3,20 @@
 //  CONFIGURAÇÃO DE CORS (ACESSO ENTRE DOMÍNIOS)
 // =======================================================
 
-// Coloque aqui os domínios que podem acessar sua API
+// Domínios permitidos a acessar sua API
 $allowedOrigins = [
     'http://localhost:3000',                 // desenvolvimento local
-    'https://user-manager-drab.vercel.app',  // sua URL no Vercel
+    'https://user-manager-drab.vercel.app',  // sua URL na Vercel
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if ($origin && in_array($origin, $allowedOrigins)) {
     header("Access-Control-Allow-Origin: $origin");
-    header("Vary: Origin"); // para caches
+    header("Vary: Origin"); // ajuda cache
 } else {
-    // Para testes, pode deixar liberado. Em produção, o ideal é usar apenas a lista acima.
+    // Para facilitar testes, libera geral.
+    // Em produção real, o ideal é usar apenas a lista de allowedOrigins.
     header("Access-Control-Allow-Origin: *");
 }
 
@@ -33,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 //  CONEXÃO COM O BANCO
 // =======================================================
 
-require __DIR__ . '/db.php'; // garante caminho correto
+require __DIR__ . '/db.php'; // garante o caminho correto até db.php
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -172,9 +173,6 @@ try {
             $stmt = $pdo->prepare("DELETE FROM items WHERE id = ?");
             $stmt->execute([$id]);
 
-            // Se quiser, pode checar linhas afetadas:
-            // $deleted = $stmt->rowCount();
-
             echo json_encode(['success' => true]);
             break;
 
@@ -188,7 +186,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'error'   => 'Erro no banco de dados',
-        'details' => $e->getMessage(), // em produção você pode remover isso
+        'details' => $e->getMessage(), // remova em produção se não quiser expor detalhes
     ]);
 } catch (Throwable $e) {
     http_response_code(500);

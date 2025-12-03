@@ -8,9 +8,7 @@ type Item = {
   description: string | null;
 };
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://usermanager.infinityfreeapp.com/backend/test.php";
+const API_URL = "https://usermanager.infinityfreeapp.com/backend/test.php";
 
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);

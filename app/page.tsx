@@ -22,11 +22,29 @@ export default function Home() {
     try {
       setLoading(true);
       const res = await fetch(API_URL);
-      if (!res.ok) throw new Error("Erro ao buscar itens");
-      const data = await res.json();
-      setItems(data);
+
+      if (!res.ok) {
+        const text = await res.text();
+        setError(`Erro ao carregar itens: ${text || res.statusText}`);
+        return;
+      }
+
+      // tenta ler JSON, senão mostra o texto cru como erro
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const data = await res.json();
+        setItems(data);
+      } else {
+        const txt = await res.text();
+        try {
+          const parsed = JSON.parse(txt);
+          setItems(parsed);
+        } catch (_e) {
+          setError(`Resposta inesperada do backend: ${txt}`);
+        }
+      }
     } catch (err) {
-      setError("Erro ao carregar itens");
+      setError(`Erro ao carregar itens: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setLoading(false);
     }
@@ -56,14 +74,18 @@ export default function Home() {
         body: JSON.stringify(body),
       });
 
-      if (!res.ok) throw new Error("Erro ao salvar");
+      if (!res.ok) {
+        const text = await res.text();
+        setError(text || "Erro ao salvar");
+        return;
+      }
 
       await fetchItems();
       setName("");
       setDescription("");
       setEditingId(null);
     } catch (err) {
-      setError("Erro ao salvar item");
+      setError(`Erro ao salvar item: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
 
@@ -87,7 +109,11 @@ export default function Home() {
         method: "DELETE",
       });
 
-      if (!res.ok) throw new Error("Erro ao excluir");
+      if (!res.ok) {
+        const text = await res.text();
+        setError(text || "Erro ao excluir");
+        return;
+      }
 
       await fetchItems();
     } catch (err) {

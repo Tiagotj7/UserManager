@@ -38,10 +38,35 @@ async function proxy(req: NextRequest) {
         ? "O backend remoto está retornando uma página HTML de proteção (anti-bot). Servidores não executam JavaScript, então o proxy não consegue passar por essa verificação."
         : "O backend remoto retornou HTML inesperado em vez de JSON.";
 
+      // Tenta um fallback rápido para `test.php` no mesmo diretório (útil em alguns hosts)
+      let fallbackAttempt: { ok: boolean; status: number; note?: string } | null = null;
+      try {
+        let testUrl = BACKEND_API_URL;
+        if (testUrl.endsWith("index.php")) {
+          testUrl = testUrl.replace(/index\.php$/i, "test.php");
+        } else {
+          // tenta adicionar test.php ao mesmo diretório
+          const idx = testUrl.lastIndexOf('/');
+          testUrl = testUrl.slice(0, idx + 1) + 'test.php';
+        }
+
+        const testRes = await fetch(testUrl, init);
+        const testCt = (testRes.headers.get("content-type") || "").toLowerCase();
+        if (testRes.ok && testCt.includes("application/json")) {
+          const body = await testRes.text();
+          return new Response(body, { status: testRes.status, headers: { "Content-Type": "application/json; charset=utf-8" } });
+        } else {
+          fallbackAttempt = { ok: false, status: testRes.status, note: `fallback to ${testUrl} returned content-type ${testCt}` };
+        }
+      } catch (e: any) {
+        fallbackAttempt = { ok: false, status: 0, note: `fallback error: ${e?.message ?? String(e)}` };
+      }
+
       const errBody = {
         error: "Backend returned HTML",
         message,
         snippet,
+        fallbackAttempt,
         hint: "Hospede o PHP em um servidor que permita requisições server-to-server (sem proteção baseada em JS), ou configure BACKEND_API_URL para um endpoint JSON de teste (ex: /backend/test.php).",
       };
 

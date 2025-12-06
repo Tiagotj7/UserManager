@@ -130,7 +130,7 @@ export default function Home() {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              style={{ width: "100%", padding: 8 }}
+              style={{ width: "100%", padding: 8, resize: "none" }}
             />
           </label>
         </div>

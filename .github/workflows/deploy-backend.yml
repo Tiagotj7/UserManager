@@ -1,4 +1,4 @@
-name: 🚀 Deploy PHP Backend to InfinityFree
+name: 🚀 Deploy PHP Backend to alwaysdata
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: 📦 Upload backend to InfinityFree
+    name: 📦 Upload backend to alwaysdata
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

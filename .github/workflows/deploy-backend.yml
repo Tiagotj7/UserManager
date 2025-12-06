@@ -19,16 +19,19 @@ jobs:
           sudo apt-get install -y lftp
           echo "Testing FTP/FTPS connection to server..."
           # Try FTPS (disable certificate verification to avoid CI cert issues)
-          lftp -u "${{ secrets.FTP_USERNAME }}","${{ secrets.FTP_PASSWORD }}" -e "set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate no; pwd; ls -la; bye" ftpupload.net || true
+          # Use Alwaysdata FTP host
+          HOST=ftp.alwaysdata.com
+          lftp -u "${{ secrets.FTP_USERNAME }}","${{ secrets.FTP_PASSWORD }}" -e "set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate no; pwd; ls -la; bye" $HOST || true
           # Try plain FTP as fallback
-          lftp -u "${{ secrets.FTP_USERNAME }}","${{ secrets.FTP_PASSWORD }}" -e "pwd; ls -la; bye" ftpupload.net || true
+          lftp -u "${{ secrets.FTP_USERNAME }}","${{ secrets.FTP_PASSWORD }}" -e "pwd; ls -la; bye" $HOST || true
 
 
       - name: Upload backend folder via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftpupload.net
+          server: ftp.alwaysdata.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./backend/
-          server-dir: /home/usermanager/
+          # default path for alwaysdata (adjust if your account uses a different path)
+          server-dir: /home/${{ secrets.FTP_USERNAME }}/www/

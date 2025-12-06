@@ -6,7 +6,7 @@
 // Domínios permitidos a acessar sua API
 $allowedOrigins = [
     'http://localhost:3000',
-    'http://https://user-manager-ds03408xb-tiagos-projects-8ff6d892.vercel.app',
+    'https://user-manager-red.vercel.app',
 ];
     
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -20,7 +20,7 @@ if ($origin && in_array($origin, $allowedOrigins)) {
     header("Access-Control-Allow-Origin: *");
 }
 
-header('Access-Control-Allow-Origin: https://user-manager-drab.vercel.app');
+header('Access-Control-Allow-Origin: https://user-manager-red.vercel.app');
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header('Content-Type: application/json; charset=utf-8');

@@ -6,7 +6,7 @@
 // Domínios permitidos a acessar sua API
 $allowedOrigins = [
     'http://localhost:3000',
-    'http://https://user-manager-drab.vercel.app',
+    'http://https://user-manager-ds03408xb-tiagos-projects-8ff6d892.vercel.app',
 ];
     
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';

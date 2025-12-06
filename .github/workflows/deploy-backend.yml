@@ -1,37 +1,35 @@
-name: 🚀 Deploy PHP Backend to alwaysdata
+name: Deploy Backend to AlwaysData
 
 on:
   push:
     branches:
-      - main        # ou 'master', conforme o nome da sua branch
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: 📦 Upload backend to alwaysdata
+
     steps:
+      # 1. Checkout do código
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Debug FTP connection (non-failing)
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y lftp
-          echo "Testing FTP/FTPS connection to server..."
-          # Try FTPS (disable certificate verification to avoid CI cert issues)
-          # Use Alwaysdata FTP host
-          HOST=ftp-usermanager.alwaysdata.net
-          lftp -u "${{ secrets.FTP_USERNAME }}","${{ secrets.FTP_PASSWORD }}" -e "set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate no; pwd; ls -la; bye" $HOST || true
-          # Try plain FTP as fallback
-          lftp -u "${{ secrets.FTP_USERNAME }}","${{ secrets.FTP_PASSWORD }}" -e "pwd; ls -la; bye" $HOST || true
-
-
+      # 2. Enviar pasta /backend para o servidor via FTPS
       - name: Upload backend folder via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ftp-usermanager.alwaysdata.net
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./backend/
-          # default path for alwaysdata (adjust if your account uses a different path)
-          server-dir: /home/${{ secrets.FTP_USERNAME }}/www/
+
+          protocol: ftps           # Obrigatório no AlwaysData
+          security: strict         # TLS obrigatório
+          port: 21                 # Porta FTPS
+
+          local-dir: ./backend/    # Pasta que está no seu repositório
+          server-dir: /home/${{ secrets.FTP_USERNAME }}/www/  # Caminho remoto
+
+          exclude: |
+            **/.git*
+            **/.github*
+            **/node_modules/**

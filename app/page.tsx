@@ -8,7 +8,7 @@ type Item = {
   description: string | null;
 };
 
-const API_URL = "https://usermanager.infinityfreeapp.com/backend/index.php";
+const API_URL = "/api/proxy";
 
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);

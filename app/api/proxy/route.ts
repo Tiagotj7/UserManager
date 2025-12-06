@@ -26,6 +26,27 @@ async function proxy(req: NextRequest) {
     }
 
     const res = await fetch(target, init);
+    // Se o backend retornar HTML (ex.: página de proteção do host), devolvemos
+    // um erro JSON claro para o frontend em vez de tentar repassar HTML.
+    const contentType = (res.headers.get("content-type") || "").toLowerCase();
+    if (contentType.includes("text/html")) {
+      const html = await res.text();
+      const snippet = html.slice(0, 1000);
+      // Detect common InfinityFree anti-bot snippet
+      const isAntiBot = html.includes("aes.js") || html.includes("requires Javascript") || html.includes("slowAES.decrypt");
+      const message = isAntiBot
+        ? "O backend remoto está retornando uma página HTML de proteção (anti-bot). Servidores não executam JavaScript, então o proxy não consegue passar por essa verificação."
+        : "O backend remoto retornou HTML inesperado em vez de JSON.";
+
+      const errBody = {
+        error: "Backend returned HTML",
+        message,
+        snippet,
+        hint: "Hospede o PHP em um servidor que permita requisições server-to-server (sem proteção baseada em JS), ou configure BACKEND_API_URL para um endpoint JSON de teste (ex: /backend/test.php).",
+      };
+
+      return new Response(JSON.stringify(errBody), { status: 502, headers: { "Content-Type": "application/json; charset=utf-8" } });
+    }
 
     // Build response headers (we avoid forwarding some hop-by-hop headers)
     const headers = new Headers();

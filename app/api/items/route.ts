@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 
 // BACKEND_API_URL deve ser definido no ambiente (Vercel) apontando para
 // o arquivo PHP: ex: https://meu-backend.com/backend/index.php
-const BACKEND_API_URL = process.env.BACKEND_API_URL || "https://usermanager.infinityfreeapp.com/backend/index.php";
+const BACKEND_API_URL = process.env.BACKEND_API_URL || "https://usermanager.alwaysdata.net";
 
 export const dynamic = "force-dynamic";
 

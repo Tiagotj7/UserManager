@@ -1,8 +1,8 @@
 <?php
-$host = 'sql311.infinityfree.com'; // MySQL Hostname do painel
-$db   = 'if0_40369202_db_admin';   // nome completo do banco
-$user = 'if0_40369202';            // usuário MySQL
-$pass = '25VKNnWoG0gADjk';         // senha que você escolheu
+$host = 'mysql-usermanager.alwaysdata.net'; // MySQL Hostname do painel
+$db   = 'usermanager_db';   // nome completo do banco
+$user = '444829';            // usuário MySQL
+$pass = 'Senha123..';         // senha que você escolheu
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

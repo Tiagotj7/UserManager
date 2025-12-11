@@ -21,6 +21,8 @@ export default function Home() {
   const fetchItems = async () => {
     try {
       setLoading(true);
+      setError("");
+
       const res = await fetch(API_URL);
 
       if (!res.ok) {
@@ -29,22 +31,19 @@ export default function Home() {
         return;
       }
 
-      // tenta ler JSON, senão mostra o texto cru como erro
-      const contentType = res.headers.get("content-type") || "";
-      if (contentType.includes("application/json")) {
-        const data = await res.json();
+      // sempre esperamos JSON do proxy
+      const data = await res.json();
+      if (Array.isArray(data)) {
         setItems(data);
       } else {
-        const txt = await res.text();
-        try {
-          const parsed = JSON.parse(txt);
-          setItems(parsed);
-        } catch (_e) {
-          setError(`Resposta inesperada do backend: ${txt}`);
-        }
+        setError(`Resposta inesperada do backend: ${JSON.stringify(data)}`);
       }
     } catch (err) {
-      setError(`Erro ao carregar itens: ${err instanceof Error ? err.message : String(err)}`);
+      setError(
+        `Erro ao carregar itens: ${
+          err instanceof Error ? err.message : String(err)
+        }`
+      );
     } finally {
       setLoading(false);
     }
@@ -85,7 +84,11 @@ export default function Home() {
       setDescription("");
       setEditingId(null);
     } catch (err) {
-      setError(`Erro ao salvar item: ${err instanceof Error ? err.message : String(err)}`);
+      setError(
+        `Erro ao salvar item: ${
+          err instanceof Error ? err.message : String(err)
+        }`
+      );
     }
   };
 

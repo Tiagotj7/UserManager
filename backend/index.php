@@ -1,4 +1,5 @@
 <?php
+// backend/index.php
 // =======================================================
 //  CONFIGURAÇÃO DE CORS (ACESSO ENTRE DOMÍNIOS)
 // =======================================================
@@ -8,7 +9,7 @@ $allowedOrigins = [
     'http://localhost:3000',
     'https://user-manager-red.vercel.app',
 ];
-    
+
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if ($origin && in_array($origin, $allowedOrigins)) {
@@ -16,11 +17,10 @@ if ($origin && in_array($origin, $allowedOrigins)) {
     header("Vary: Origin"); // ajuda cache
 } else {
     // Para facilitar testes, libera geral.
-    // Em produção real, o ideal é usar apenas a lista de allowedOrigins.
+    // Em produção real, use apenas a lista de allowedOrigins.
     header("Access-Control-Allow-Origin: *");
 }
 
-header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header('Content-Type: application/json; charset=utf-8');

@@ -1,4 +1,5 @@
 <?php
+// backend/db.php
 $host = 'mysql-usermanager.alwaysdata.net'; // MySQL Hostname do painel
 $db   = 'usermanager_db';   // nome completo do banco
 $user = '444829';            // usuário MySQL
